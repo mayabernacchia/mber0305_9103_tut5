@@ -54,3 +54,4 @@ This coding technique could help me in several ways:
 ```
 To achieve other objectives such as the use of a hybrid visual language, some graphic elements could be replaced with text or simply characters.
 ```
+
