@@ -1,6 +1,6 @@
-# Major Project
-
-###### mber0305_9103_tut5
+# Major Project 
+##### Group E - Individual part
+###### Maya Bernacchia - mber0305
 
 ## References
 
