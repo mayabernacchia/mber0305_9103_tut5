@@ -1,3 +1,5 @@
+let song, analyser;
+let isPlaying = false;
 let circles = []; 
 const points = [
     [4, 136], [95, 157], [137, 96], [136, 4], [97, 243], [242, 118],
@@ -7,6 +9,11 @@ const points = [
     [418, 162], [396, 76], [458, 12], [500, 21], [296, 0], [500, 182],
     [0, 28], [25, -10], [6, 458], [40, 540], [300, 500]
   ];
+
+function preload() {
+  // Load the sound file in preload
+  song = loadSound('B1-Vern-Levant.mp3');
+}
 
 // Class for circles with dot
 class DotCircle {
@@ -296,56 +303,61 @@ const circleClasses = {
 function setup() {
   createCanvas(500, 500);
   drawGradient();
-  
   createCircles(circleParams, circleClasses);
  
- 
-  //structure
-
-  // connect point
-  connectPoints(points, 108);
   
-  // random ellipses
-  generateRandomEllipses(points);
+  //sound
+  analyser = new p5.Amplitude(); // Initialize amplitude analyzer
+  analyser.setInput(song); // Set the song as input to the analyser
   
-   
+  //button
+  let button = createButton('Play/Pause');
+  button.position((width - button.width) / 2, height - button.height - 20);
+  button.size(100, 30);
+  button.style(`
+    border: none;
+    border-radius: 15px;
+    background-color: #BD4591;
+    color: white; // text color 
+    font-size: 20px; // font size
+    font-family: Helvetica; // Font 
+  `);
+  
+  button.mousePressed(play_pause);
+  
 
 }
 
 function draw() {
   
+  
+  //structure
+  connectPoints(points, 108);
+  generateRandomEllipses(points);
+  
   // Loop through the array and call display() on each circle object
   for (let i = 0; i < circles.length; i++) {
-    circles[i].display();
-  }
-  
-  // Draw specific pink arcs between the given points
-  drawPinkArc([70, 70], [95, 157]);
-  drawPinkArc([180, 180], [242, 118]);
-  drawPinkArc([290, 290], [376, 316]);
-  drawPinkArc([440, 250], [500, 182]);
-  drawPinkArc([100, 480], [183, 500]);
-  
- 
-  
-  
-  
-}
+    circles[i].display();}
 
+    let volume = analyser.getLevel(); // Get current volume level
+    let strokeThickness = map(volume, 0, 1, 1, 10); // Map volume to stroke thickness
 
-function createCircles(params, classes) {
-  // Crea cerchi basati su `circleParams`
-  for (let key in params) {
-    let paramSetArray = params[key]; // Prendi i parametri per il key corrente
-    for (let i = 0; i < paramSetArray.length; i++) {
-      const paramSet = paramSetArray[i];
-      const type = paramSet[0];
-      let instance = classes[type] ? new classes[type](...paramSet.slice(1)) : null;
-      if (instance) {
-        circles.push(instance);
+    if (isPlaying){
+      for (let circle of circles) {
+          if (circle instanceof DotCircle) {
+              circle.display(); // Display DotCircle
+          } else if (circle instanceof LineCircle) {
+              circle.strokeSize = strokeThickness; // Adjust stroke size based on volume
+              circle.display(); // Display LineCircle
+          } else if (circle instanceof SmallCircle) {
+              circle.display(); // Display SmallCircle
+          } else if (circle instanceof ZigzagCircle) {
+              circle.strokeColor = color(volume * 255, 0, (1 - volume) * 255); // Change stroke color based on volume
+              circle.display(); // Display ZigzagCircle
+          }
       }
-    }
   }
+
 }
 
 
@@ -363,6 +375,23 @@ function drawGradient() {
     line(0, y, width, y);
   }
 }
+
+// function for circles
+function createCircles(params, classes) {
+  // Crea cerchi basati su `circleParams`
+  for (let key in params) {
+    let paramSetArray = params[key]; // Prendi i parametri per il key corrente
+    for (let i = 0; i < paramSetArray.length; i++) {
+      const paramSet = paramSetArray[i];
+      const type = paramSet[0];
+      let instance = classes[type] ? new classes[type](...paramSet.slice(1)) : null;
+      if (instance) {
+        circles.push(instance);
+      }
+    }
+  }
+}
+
 // function for structure
 function connectPoints(points, maxDistance) {
   // Loop through each point in the array 'points' and treat it as the starting point
@@ -478,20 +507,19 @@ function createEllipse(xPos, yPos, radiusX, radiusY) {
   ellipse(xPos, yPos, radiusX * 2, radiusY * 2);
 }
 
-// Function to draw pink arcs between two points
-function drawPinkArc(start, end) {
-  const midX = (start[0] + end[0]) / 2;
-  const midY = (start[1] + end[1]) / 2;
-  const distance = calculateDistance(...start, ...end);
-
-  stroke(255, 28, 90); // Pink color
-  strokeWeight(6);
-  noFill();
-
-  push();
-  translate(midX, midY);
-  const angle = calculateAngle(...start, ...end);
-  rotate(radians(angle));
-  arc(0, 0, distance, distance, PI, TWO_PI);
-  pop();
+function play_pause() {
+  if (song.isPlaying()) {
+    song.stop();
+    isPlaying = false; // Update the global variable
+    drawGradient(); // Redraw the gradient background
+  } else {
+    song.loop();
+    isPlaying = true; // Update the global variable
+    background(0); // Set background to black
+  }
 }
+
+
+
+
+
