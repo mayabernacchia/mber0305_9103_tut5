@@ -130,13 +130,21 @@ This function toggles between static and dynamic visuals based on the audio stat
 
 ## References
 
-- .isPlaying() : https://p5js.org/reference/p5.SoundFile/isPlaying/
+- .isPlaying() https://p5js.org/reference/p5.SoundFile/isPlaying/
+
+ I used .isPlaying() to check if the song is currently playing. This function returns true if the song is playing and false otherwise.
 
 - .stop() : https://editor.p5js.org/aferriss/sketches/SyQ4OFAa-
 
+I used .stop() to stop the song and reset it to the beginning. When the song is stopped, I also triggered other actions, such as redrawing the background, resetting the graphical structure, and creating new circles.
+
 - .loop() : https://p5js.org/reference/p5.MediaElement/loop/
 
+I used .loop() to start the song and play it in a continuous loop, so that the song keeps playing until manually stopped.
+
 - drawGradient():  https://www.youtube.com/watch?v=DJgDW3F68Xc and https://p5js.org/reference/p5/lerpColor/
+
+I used lerpColor() to calculate the intermediate color between two specified colors, based on a value ranging from 0 to 1. The function takes three arguments: the starting color, the ending color, and the interpolation value (inter), which determines how close the resulting color is to the final color. An inter value of 0 will return the first color, while an inter value of 1 will return the second color. In this case, the interpolation happens linearly, creating a gradual transition from dark blue to light blue, based on the vertical position of the pixel.
 
 <br>
 
