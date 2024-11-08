@@ -341,25 +341,25 @@ function draw() {
 
   let volume = analyser.getLevel(); // Get the current volume level
   let strokeThickness = map(volume, 0, 1, 1, 10); // Map volume to set the stroke thickness
-  let dotSize = max(map(volume, 0, 1, 3, 12), 3); // Set dot size based on volume
+  
 
   // Check if the music is playing
   if (isPlaying) {
     for (let circle of circles) {
-      if (circle instanceof DotCircle) {
-        // Adjust dot size dynamically for DotCircle based on volume
-      }
       
-      else if (circle instanceof LineCircle) {
-        circle.strokeSize = strokeThickness; // Adjust stroke thickness based on volume
+     if (circle instanceof LineCircle) {
+        circle.strokeSize = strokeThickness;
+        // Adjust stroke thickness based on volume
       }
       
       else if (circle instanceof SmallCircle) {
-        circle.smallCircleColor = color(0, random(255), random(255)); // Set a random color for SmallCircle in shades of green and blue
+        circle.smallCircleColor = color(0, random(255), random(255));
+        // Set a random color for SmallCircle in shades of green and blue
       }
       
       else if (circle instanceof ZigzagCircle) {
-        circle.strokeColor = color(volume * 255, volume * 255, volume * 255); // Change stroke color based on volume
+        circle.strokeColor = color(volume * 255, volume * 255, volume * 255);
+        // Change stroke color based on volume
       }
     }
   }
@@ -370,6 +370,7 @@ function draw() {
 
 
 // function for background
+// https://www.youtube.com/watch?v=DJgDW3F68Xc
 function drawGradient() {
   // Define the start and end colors of the gradient
   let topColor = color('#004e76');  // Blue 
@@ -385,6 +386,7 @@ function drawGradient() {
 }
 
 // function for circles
+// AI use 
 function createCircles(params, classes) {
   // Crea cerchi basati su `circleParams`
   for (let key in params) {
@@ -516,6 +518,7 @@ function createEllipse(xPos, yPos, radiusX, radiusY) {
 }
 
 function play_pause() {
+  // https://p5js.org/reference/p5.SoundFile/isPlaying/
   if (song.isPlaying()) {
     song.stop();
     isPlaying = false; // Update the global variable
@@ -527,7 +530,7 @@ function play_pause() {
     createCircles(circleParams, circleClasses);
 
   } else {
-    song.loop();
+    song.loop(); //https://p5js.org/reference/p5.MediaElement/loop/
     isPlaying = true; // Update the global variable
     background(0); // Set background to black
   }
