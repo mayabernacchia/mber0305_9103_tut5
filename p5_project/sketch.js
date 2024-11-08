@@ -12,7 +12,7 @@ const points = [
 
 function preload() {
   // Load the sound file in preload
-  song = loadSound('B1-Vern-Levant.mp3');
+  song = loadSound('B1_Vern_Levant.mp3');
 }
 
 // Class for circles with dot
@@ -303,15 +303,20 @@ const circleClasses = {
 function setup() {
   createCanvas(500, 500);
   drawGradient();
+  
   createCircles(circleParams, circleClasses);
  
+  //structure
+  connectPoints(points, 108);
+  generateRandomEllipses(points);
+
   
   //sound
   analyser = new p5.Amplitude(); // Initialize amplitude analyzer
   analyser.setInput(song); // Set the song as input to the analyser
   
   //button
-  let button = createButton('Play/Pause');
+  let button = createButton('Play / Pause');
   button.position((width - button.width) / 2, height - button.height - 20);
   button.size(100, 30);
   button.style(`
@@ -329,36 +334,39 @@ function setup() {
 }
 
 function draw() {
-  
-  
-  //structure
-  connectPoints(points, 108);
-  generateRandomEllipses(points);
-  
-  // Loop through the array and call display() on each circle object
+  // Execute display() on each circle object in the array
   for (let i = 0; i < circles.length; i++) {
-    circles[i].display();}
-
-    let volume = analyser.getLevel(); // Get current volume level
-    let strokeThickness = map(volume, 0, 1, 1, 10); // Map volume to stroke thickness
-
-    if (isPlaying){
-      for (let circle of circles) {
-          if (circle instanceof DotCircle) {
-              circle.display(); // Display DotCircle
-          } else if (circle instanceof LineCircle) {
-              circle.strokeSize = strokeThickness; // Adjust stroke size based on volume
-              circle.display(); // Display LineCircle
-          } else if (circle instanceof SmallCircle) {
-              circle.display(); // Display SmallCircle
-          } else if (circle instanceof ZigzagCircle) {
-              circle.strokeColor = color(volume * 255, 0, (1 - volume) * 255); // Change stroke color based on volume
-              circle.display(); // Display ZigzagCircle
-          }
-      }
+    circles[i].display();
   }
 
+  let volume = analyser.getLevel(); // Get the current volume level
+  let strokeThickness = map(volume, 0, 1, 1, 10); // Map volume to set the stroke thickness
+  let dotSize = max(map(volume, 0, 1, 3, 12), 3); // Set dot size based on volume
+
+  // Check if the music is playing
+  if (isPlaying) {
+    for (let circle of circles) {
+      if (circle instanceof DotCircle) {
+        // Adjust dot size dynamically for DotCircle based on volume
+      }
+      
+      else if (circle instanceof LineCircle) {
+        circle.strokeSize = strokeThickness; // Adjust stroke thickness based on volume
+      }
+      
+      else if (circle instanceof SmallCircle) {
+        circle.smallCircleColor = color(0, random(255), random(255)); // Set a random color for SmallCircle in shades of green and blue
+      }
+      
+      else if (circle instanceof ZigzagCircle) {
+        circle.strokeColor = color(volume * 255, volume * 255, volume * 255); // Change stroke color based on volume
+      }
+    }
+  }
 }
+
+
+
 
 
 // function for background
@@ -512,12 +520,19 @@ function play_pause() {
     song.stop();
     isPlaying = false; // Update the global variable
     drawGradient(); // Redraw the gradient background
+    //reset structure
+    connectPoints(points, 108);
+    generateRandomEllipses(points);
+    //reset circles
+    createCircles(circleParams, circleClasses);
+
   } else {
     song.loop();
     isPlaying = true; // Update the global variable
     background(0); // Set background to black
   }
 }
+
 
 
 
