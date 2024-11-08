@@ -301,69 +301,87 @@ const circleClasses = {
 
 
 function setup() {
+  // Create the canvas where the visual elements will be drawn
   createCanvas(500, 500);
+  
+  // Call the function to draw a gradient background
   drawGradient();
   
+  // Create circles based on the parameters and classes provided
   createCircles(circleParams, circleClasses);
- 
-  //structure
-  connectPoints(points, 108);
-  generateRandomEllipses(points);
-
   
-  //sound
-  analyser = new p5.Amplitude(); // Initialize amplitude analyzer
-  analyser.setInput(song); // Set the song as input to the analyser
+  // Structure: connecting points and generating random ellipses
+  connectPoints(points, 108);  // Connects a set of points in the canvas to form a structure (108 points)
+  generateRandomEllipses(points);  // Generates ellipses based on the points (this could create random shapes or patterns)
   
-  //button
-  let button = createButton('Play / Pause');
+  // Initialize the sound analyser to detect the amplitude of the song
+  analyser = new p5.Amplitude(); // Creates an amplitude analyzer object (part of p5.js sound library)
+  analyser.setInput(song); // Sets the input to the `song` variable, so the analyser tracks the song's amplitude
+  
+  // Button setup for playing/pausing the song
+  let button = createButton('Play / Pause');  // Creates a button element with the text 'Play / Pause'
+  
+  // Position the button at the center of the canvas horizontally, and near the bottom vertically
   button.position((width - button.width) / 2, height - button.height - 20);
+  
+  // Set the size of the button
   button.size(100, 30);
+  
+  // Apply custom styles to the button (appearance)
   button.style(`
-    border: none;
-    border-radius: 15px;
-    background-color: #BD4591;
-    color: white; // text color 
-    font-size: 20px; // font size
-    font-family: Helvetica; // Font 
+    border: none;  // No border
+    border-radius: 15px;  // Rounded corners
+    background-color: #BD4591;  // Pinkish background color
+    color: white;  // White text color
+    font-size: 20px;  // Set the text size
+    font-family: Helvetica;  // Set the font to Helvetica
   `);
   
-  button.mousePressed(play_pause);
-  
-
+  // Attach the play_pause function to the button's mousePressed event
+  button.mousePressed(play_pause);  // When the button is clicked, it will call the `play_pause()` function to toggle play/pause
 }
 
+
 function draw() {
-  // Execute display() on each circle object in the array
+  // Loop through the array of circle objects and call the 'display()' method for each
   for (let i = 0; i < circles.length; i++) {
-    circles[i].display();
+    circles[i].display(); // Display each circle object on the canvas
   }
 
-  let volume = analyser.getLevel(); // Get the current volume level
-  let strokeThickness = map(volume, 0, 1, 1, 10); // Map volume to set the stroke thickness
+  // Get the current audio volume level from the analyser (value between 0 and 1)
+  let volume = analyser.getLevel(); 
   
+  // Map the volume level (0-1) to a stroke thickness value (1-10)
+  let strokeThickness = map(volume, 0, 1, 1, 10); 
 
-  // Check if the music is playing
+  // Check if the music is playing (this could be a flag that tracks whether audio is active)
   if (isPlaying) {
+    // Iterate over each circle in the circles array
     for (let circle of circles) {
       
-     if (circle instanceof LineCircle) {
-        circle.strokeSize = strokeThickness;
-        // Adjust stroke thickness based on volume
+      // If the circle is an instance of the 'LineCircle' class
+      if (circle instanceof LineCircle) {
+        // Adjust the stroke thickness based on the audio volume level
+        circle.strokeSize = strokeThickness; 
       }
       
+      // If the circle is an instance of the 'SmallCircle' class
       else if (circle instanceof SmallCircle) {
-        circle.smallCircleColor = color(0, random(255), random(255));
-        // Set a random color for SmallCircle in shades of green and blue
+        // Change the color of the small circle to a random green/blue color 
+        // The random function gives random values for red (0), green, and blue
+        circle.smallCircleColor = color(0, random(255), random(255)); 
       }
       
+      // If the circle is an instance of the 'ZigzagCircle' class
       else if (circle instanceof ZigzagCircle) {
-        circle.strokeColor = color(volume * 255, volume * 255, volume * 255);
-        // Change stroke color based on volume
+        // Set the stroke color based on the audio volume
+        // The volume is used to scale the color intensity (from black to white)
+        circle.strokeColor = color(volume * 255, volume * 255, volume * 255); 
       }
     }
   }
 }
+
 
 
 
